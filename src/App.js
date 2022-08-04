@@ -6,12 +6,35 @@ function App() {
   const [page, setPage] = useState(0);
   const [followers, setFollowers] = useState([]);
 
+  const handlePage = (index) => {
+    setPage(index);
+  };
   useEffect(() => {
     // Do nothing if loading because the array is empty when the page loads
     if (loading) return;
     setFollowers(data[page]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loading]);
+  }, [loading, page]);
+
+  const nextPage = () => {
+    setPage((oldPage) => {
+      let nextPage = oldPage + 1;
+      if (nextPage > data.length - 1) {
+        nextPage = 0;
+      }
+      return nextPage;
+    });
+  };
+
+  const prevPage = () => {
+    setPage((oldPage) => {
+      let prevPage = oldPage - 1;
+      if (prevPage < 0) {
+        prevPage = data.length - 1;
+      }
+      return prevPage;
+    });
+  };
 
   return (
     <main>
@@ -25,7 +48,27 @@ function App() {
             return <Follower key={follower.id} {...follower} />;
           })}
         </div>
-        {!loading && <div className='btn-container'>Herro wolrd</div>}
+        {!loading && (
+          <div className='btn-container'>
+            <button className='prev-btn' onClick={prevPage}>
+              prev
+            </button>
+            {data.map((item, index) => {
+              return (
+                <button
+                  key={index}
+                  className={`page-btn ${index === page ? 'active-btn' : ''}`}
+                  onClick={() => handlePage(index)}
+                >
+                  {index + 1}
+                </button>
+              );
+            })}
+            <button className='next-btn' onClick={nextPage}>
+              next
+            </button>
+          </div>
+        )}
       </section>
     </main>
   );
